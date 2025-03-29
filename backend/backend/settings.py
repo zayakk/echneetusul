@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+from datetime import datetime
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -122,3 +123,21 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+########## user defined functions ##########
+def sendResponse(action, resultCode, data):
+    response = {}
+    response["action"] = action
+    response["data"] = data
+    response["resultCode"] = resultCode
+    response["resultMessage"] = resultMessages[resultCode]
+    response["size"] = len(data)
+    response["curdate"] = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+    return response
+    
+########## user defined contants ##########
+resultMessages = {
+    200 : "Success",
+    404 : "Error"
+}
