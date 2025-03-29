@@ -153,5 +153,9 @@ resultMessages = {
     1006 : "Amjilttai nevterlee",
     1007 : "Hereglegchiin ner esvel nuuts ug buruu",
     2001 : "Shine ug burtgegdlee",
-    2002 : "Umnu burtgegdsen ug baina. burtgeh bolomjgui"
+    2002 : "Umnu burtgegdsen ug baina. burtgeh bolomjgui",
+    
+    
+    
+    5003: "Tseejilsen ug ustgalaa"
 }
