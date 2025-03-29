@@ -1,13 +1,17 @@
 from django.http.response import JsonResponse
 from datetime import datetime
 import pytz, json
+from django.views.decorators.csrf import csrf_exempt
 
+
+@csrf_exempt
 def dt_time(request):
     restData = [{"time":str(datetime.now())}]
     resp = {"action":"time", "data":restData, "size":1, 'resultCode':'200',
                           'resultMessage':'Success', "datetime":datetime.now()}
     return (resp)
 
+@csrf_exempt
 def dt_time_ub(request):
     ub_tz=pytz.timezone("Asia/Ulaanbaatar")
 
@@ -17,6 +21,7 @@ def dt_time_ub(request):
                           'resultMessage':'Success', "datetime":datetime.now()}
     return (resp)
 
+@csrf_exempt
 def checkService(request):
     jsons = json.loads(request.body)
     action = jsons ['action']
