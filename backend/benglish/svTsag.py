@@ -4,51 +4,62 @@ import pytz, json
 from django.views.decorators.csrf import csrf_exempt
 from backend.settings import sendResponse
 
-
 def dt_time(request): #{key : value, key1 : value1, key2 : value2, }
-    jsons = json.loads(request.body) # request.body-g dictionary boln avch baina
+    jsons = json.loads(request.body)
     action = jsons['action']
     respData = [{"tsag":str(datetime.now())}] # response-n data-g beldej baina. data key ni list baih buguud list dotor dictionary baina.
     resp = sendResponse(action, 200, respData)
     return (resp) # response bustsaaj baina
 
-def dt_timeub(request): #{key : value, key1 : value1, key2 : value2, }
-    jsons = json.loads(request.body) # request.body-g dictionary boln avch baina
+def dt_hello(request):
+    jsons = json.loads(request.body)
     action = jsons['action']
-    #Ulaanbaatar time zone
-    ub_tz = pytz.timezone("Asia/Ulaanbaatar")
-    
-    #get current time in Ulaanbaatar
-    ub_time = datetime.now(ub_tz)
-    
-    respData = [{"tsag":ub_time.strftime("%Y-%m-%d %H:%M:%S")}] # response-n data-g beldej baina. data key ni list baih buguud list dotor dictionary baina.
+    respData = [{"result":"Hello world"}]
     resp = sendResponse(action, 200, respData)
-    return (resp) # response bustsaaj baina
+    return resp
+
+def dt_class(request):
+    jsons = json.loads(request.body)
+    action = jsons['action']
+    respData = [{"result":"ECHNEE"}]
+    resp = sendResponse(action, 200, respData)
+    return resp
 
 @csrf_exempt
-def checkService(request): # hamgiin ehend duudagdah request shalgah function
+def checkService(request):
     if request.method == "POST":
         try:
-            jsons = json.loads(request.body) # request.body-g dictionary boln avch baina
+            jsons = json.loads( request.body)
         except: 
             action = "invalid request json"
             respData = []
             resp = sendResponse(action, 404, respData)
-            return JsonResponse(resp)
-        try:
-            action = jsons["action"] # jsons-oos action key deh value-g action huvisagchid utga olgoj baina
+            return (JsonResponse(resp))
+        # print(jsons)
+        try: 
+            action = jsons['action']
         except:
-            action = "no action key"
+            action = "no action"
             respData = []
-            resp = sendResponse(action, 404, respData)
-            return JsonResponse(resp)
+            resp = sendResponse(action, 400, respData)
+            return (JsonResponse(resp))
         
-        if action == "tsag": # request.body -n action ni "tsag" baival ajillana.
+        # print(action)
+        if(action == 'time'):
             result = dt_time(request)
-            return JsonResponse(result)
-        elif action == "tsagub": # request.body -n action ni "tsagub" baival ajillana.
-            result = dt_timeub(request)
-            return JsonResponse(result)
-        return (JsonResponse ({}))
+            return (JsonResponse(result))
+        elif(action == 'hello'): #hello world
+            result = dt_hello(request)
+            return (JsonResponse(result))
+        elif(action == 'class'): #echnee
+            result = dt_class(request)
+            return (JsonResponse(result))
+        else:
+            action = action
+            respData = []
+            resp = sendResponse(action, 406, respData)
+            return (JsonResponse(resp))
     elif request.method == "GET":
-        return (JsonResponse ({}))
+        return (JsonResponse({}))
+    else :
+        return (JsonResponse({}))
