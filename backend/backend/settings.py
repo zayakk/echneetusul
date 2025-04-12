@@ -140,9 +140,9 @@ def disconnectDB(conn):
     conn.close()
     
 ########## user defined contants ##########
-resultMessages = {
+resultMessages = { 
     200 : "Success",
-    400 : "Bad request",
+    400 : "action key baihgui",
     404 : "Not found",
     406 : "Iim action baihgui",
     1001 : "getuser api key baihgui",
