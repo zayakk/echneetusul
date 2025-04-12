@@ -155,7 +155,5 @@ resultMessages = {
     2001 : "Shine ug burtgegdlee",
     2002 : "Umnu burtgegdsen ug baina. burtgeh bolomjgui",
     
-    
-    
-    5003: "Tseejilsen ug ustgalaa"
+ 
 }
