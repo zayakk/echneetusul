@@ -82,6 +82,8 @@ def dt_getAllCategory(request):
     return resp
 xfcxc
 sxrfs
+hujghuj
+gyujutg
 
 @csrf_exempt
 def checkService(request):
