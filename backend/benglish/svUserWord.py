@@ -33,6 +33,66 @@ def dt_addedword(request):
 
     return resp
 
+# {"action":"getUserWord","uid":1}
+def dt_getUserWord(request):
+
+
+    jsons = json.loads(request.body)
+    action = jsons['action']
+    try:
+        uid = jsons['uid']
+        # wid = jsons['wid']
+    except:
+        action = action
+        respData = []
+        resp = sendResponse(action, 4001, respData)
+        return (resp)
+
+    myConn = connectDB()
+    cursor = myConn.cursor()
+
+    query = f"SELECT * FROM t_userword WHERE uid = {uid} order by wid asc"
+    cursor.execute(query)
+    columns = cursor.description
+    # print(columns)
+    respData = [{columns[index][0]:column for index , column in enumerate(value) } for value in cursor.fetchall()]
+    
+    resp = sendResponse(action, 4002, respData)
+
+    return resp
+
+
+def dt_DeleteUserWord(request):
+    jsons = json.loads(request.body)
+    action = jsons['action']
+    try:
+        uid = jsons['uid']
+        wid = jsons['wid']
+    except:
+        action = action
+        respData = []
+        resp = sendResponse(action, 4003, respData)
+        return (resp)
+
+    myConn = connectDB()
+    cursor = myConn.cursor()
+
+    query = f"DELETE FROM t_userword WHERE uid = {uid} and wid = {wid}"
+    cursor.execute(query)
+    myConn.commit()
+
+    query = f"SELECT * FROM t_word WHERE wid = {wid}"
+    cursor.execute(query)
+    columns = cursor.description
+    # print(columns)
+    respData = [{columns[index][0]:column for index , column in enumerate(value) } for value in cursor.fetchall()]
+    
+    resp = sendResponse(action, 4004, respData)
+
+    return resp
+
+
+
 @csrf_exempt
 def checkService(request):
     if request.method == "POST":
@@ -53,10 +113,15 @@ def checkService(request):
             return (JsonResponse(resp))
         
         # print(action)
-        if(action == 'addedword'):
+        if(action == 'UserWordadd'):
             result = dt_addedword(request)
             return (JsonResponse(result))
-       
+        elif(action == 'getUserWord'):
+            result = dt_getUserWord(request)
+            return (JsonResponse(result))
+        elif(action == 'DeleteUserWord'):
+            result = dt_DeleteUserWord(request)
+            return (JsonResponse(result))
         else:
             action = action
             respData = []
@@ -66,4 +131,4 @@ def checkService(request):
         return (JsonResponse({}))
     else :
         return (JsonResponse({}))
-
+    
