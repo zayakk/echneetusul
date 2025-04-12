@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from django.http.response import JsonResponse
 from datetime import datetime
 import pytz, json
@@ -7,7 +8,7 @@ from backend.settings import sendResponse
 def dt_time(request): #{key : value, key1 : value1, key2 : value2, }
     jsons = json.loads(request.body)
     action = jsons['action']
-    respData = [{"tsag":str(datetime.now())}] # response-n data-g beldej baina. data key ni list baih buguud list dotor dictionary baina.
+    respData = [{"tsag":datetime.now()}] # response-n data-g beldej baina. data key ni list baih buguud list dotor dictionary baina.
     resp = sendResponse(action, 200, respData)
     return (resp) # response bustsaaj baina
 
@@ -60,6 +61,6 @@ def checkService(request):
             resp = sendResponse(action, 406, respData)
             return (JsonResponse(resp))
     elif request.method == "GET":
-        return (JsonResponse({}))
+        return (JsonResponse({"method":"GET"}))
     else :
-        return (JsonResponse({}))
+        return (JsonResponse({"method":"BUSAD"}))

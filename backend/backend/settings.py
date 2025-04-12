@@ -128,7 +128,7 @@ def sendResponse(action, resultCode, data):
 def connectDB():
     conn  = psycopg2.connect(
         host = "192.168.0.15", 
-        # host = "59.153.86.251", 
+        # host = "59.153.86.254", 
         dbname = "dbechnee",
         user = "userechnee", 
         password = "passechnee",
@@ -145,15 +145,39 @@ resultMessages = {
     400 : "action key baihgui",
     404 : "Not found",
     406 : "Iim action baihgui",
-    1001 : "getuser api key baihgui",
-    1002 : "reguser api key baihgui",
-    1003 : "Amjilttai burtguullee",
+    1001 : "getuser api usermail key baihgui",
+    1002 : "reguser api usermail, pwd ali neg key baihgui",
+    1003 : "Hereglegch Amjilttai burtguullee",
     1004 : "Already registered user mail",
     1005 : "loginuser api key baihgui",
     1006 : "Amjilttai nevterlee",
     1007 : "Hereglegchiin ner esvel nuuts ug buruu",
+    1008 : "reguser action dotood aldaa",
     2001 : "Shine ug burtgegdlee",
     2002 : "Umnu burtgegdsen ug baina. burtgeh bolomjgui",
     
  
+    4001 : "dt_getWord api-d uid key bhgu",
+    4002 : "Hereglegchin buh ugiig olloo",
+    4003 : "dt_DeleteUserWord api-d uid, wid key bhgu",
+    4004 : "Amjilttai ustgalaa",
+    
+    5003: "Tseejilsen ug ustgalaa",
+    
+    6001 : "getCategory api-d cid key baihgui",
+    6002 : "getCategory api-d cid key amjilttai avlaa",
+    6003 : "getAllCategory api-d amjilttai avlaa",
+    
+    7001 : "getsubcategory scid key байхгүй",
+    7002 : "getsubcategory scid key амжилттай ",
+    7003 : "getAllsubcategory scid key байхгүй ",
+    7004 : "getAllsubcategory scid key амжилттай ",
+    
+    8001: "ug uurchlugdluu",
+    
+    9001: "ug ustgagdlaa",
+    
+    10001 : "select_word api-d uwid key baihgui",
+    
+    
 }

@@ -1,3 +1,4 @@
+from typing import final
 from django.http.response import JsonResponse
 from datetime import datetime
 import pytz, json
@@ -22,7 +23,7 @@ def dt_getuser(request):
     columns = cursor.description
     # print(columns)
     respRow = [{columns[index][0]:column for index , column in enumerate(value) } for value in cursor.fetchall()]
-    # print(respRow)
+    print(respRow)
     cursor.close()
     disconnectDB(myConn)
     
@@ -41,30 +42,35 @@ def dt_reguser(request):
         resp = sendResponse(action, 1002, respData)
         return (resp)
     
-    myConn = connectDB()
-    cursor = myConn.cursor()
-    query = f"SELECT COUNT(*) AS niit FROM t_user WHERE usermail = '{usermail}'"
-    cursor.execute(query)
-    columns = cursor.description
-    # print(columns)
-    respRow = [{columns[index][0]:column for index , column in enumerate(value) } for value in cursor.fetchall()]
-    
-    # print(respRow)
-    if respRow[0]['niit'] == 0:
-        query = f"INSERT INTO t_user(usermail, pwd, regdate,lastlogin) VALUES ('{usermail}', '{pwd}', NOW(),NOW())"
+    try: 
+        myConn = connectDB()
+        cursor = myConn.cursor()
+        query = f"SELECT COUNT(*) AS niit FROM t_user WHERE usermail = '{usermail}'"
         cursor.execute(query)
-        myConn.commit()
-        respRow = [{"usermail":usermail}]
-        resp = sendResponse(action, 1003, respRow)
+        columns = cursor.description
+        # print(columns)
+        respRow = [{columns[index][0]:column for index , column in enumerate(value) } for value in cursor.fetchall()]
         
-    else: 
+        # print(respRow)
+        if respRow[0]['niit'] == 0:
+            query = f"INSERT INTO t_user(usermail, pwd, regdate,lastlogin) VALUES ('{usermail}', '{pwd}', NOW(),NOW())"
+            cursor.execute(query)
+            myConn.commit()
+            respRow = [{"usermail":usermail}]
+            resp = sendResponse(action, 1003, respRow)
+        else: 
+            action = action
+            respData = [{"usermail":usermail}]
+            resp = sendResponse(action, 1004, respData)
+        
+    except:
         action = action
-        respData = [{"usermail":usermail}]
-        resp = sendResponse(action, 1004, respData)
-        
+        respData = []
+        resp = sendResponse(action, 1008, respData)
+    finally: 
+        cursor.close()
+        disconnectDB(myConn)
     
-    cursor.close()
-    disconnectDB(myConn)
     
     return resp
     
