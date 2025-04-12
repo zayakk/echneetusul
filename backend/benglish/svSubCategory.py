@@ -30,8 +30,8 @@ def dt_getsubcategory(request):
     
     resp = sendResponse(action, 7002, respRow)
     return resp
-# {"action":"getAllsubcategory","cid":1}
 
+# {"action":"getAllsubcategory","cid":1}
 def dt_getAllsubcategory(request):
     jsons = json.loads(request.body)
     action = jsons['action']
@@ -90,5 +90,12 @@ def checkService(request):
         elif action == 'getAllsubcategory':
             result = dt_getAllsubcategory(request)
             return (JsonResponse(result))
-
-    return JsonResponse(sendResponse("invalid_method", 405, []))
+        else:
+            action = action
+            respData = []
+            resp = sendResponse(action, 406, respData)
+            return (JsonResponse(resp))
+    elif request.method == "GET":
+        return (JsonResponse({}))
+    else :
+        return (JsonResponse({}))
