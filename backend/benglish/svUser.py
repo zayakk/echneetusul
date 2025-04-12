@@ -16,17 +16,24 @@ def dt_getuser(request):
         resp = sendResponse(action, 1001, respData)
         return (resp)
     
-    myConn = connectDB()
-    cursor = myConn.cursor()
-    query = f"SELECT uid, usermail, pwd, regdate, lastlogin FROM t_user WHERE usermail = '{usermail}'"
-    cursor.execute(query)
-    columns = cursor.description
-    # print(columns)
-    respRow = [{columns[index][0]:column for index , column in enumerate(value) } for value in cursor.fetchall()]
-    print(respRow)
-    cursor.close()
-    disconnectDB(myConn)
-    
+    try:
+        myConn = connectDB()
+        cursor = myConn.cursor()
+        query = f"SELECT uid, usermail, pwd, regdate, lastlogin FROM t_user WHERE usermail = '{usermail}'"
+        cursor.execute(query)
+        columns = cursor.description
+        # print(columns)
+        respRow = [{columns[index][0]:column for index , column in enumerate(value) } for value in cursor.fetchall()]
+        print(respRow)
+        
+    except:
+        action = action
+        respData = []
+        resp = sendResponse(action, 1008, respData)
+    finally:
+        cursor.close()
+        disconnectDB(myConn)
+        
     resp = sendResponse(action, 200, respRow)
     return resp
 
