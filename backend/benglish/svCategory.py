@@ -80,10 +80,6 @@ def dt_getAllCategory(request):
     
     resp = sendResponse(action, 6003, respRow)
     return resp
-xfcxc
-sxrfs
-hujghuj
-gyujutg
 
 @csrf_exempt
 def checkService(request):
