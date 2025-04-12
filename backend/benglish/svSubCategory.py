@@ -1,30 +1,68 @@
 from django.http.response import JsonResponse
-from datetime import datetime
-import pytz, json
+# from benglish import svSubCategory
+import json
 from django.views.decorators.csrf import csrf_exempt
-from backend.settings import sendResponse
+from backend.settings import sendResponse, connectDB, disconnectDB
 
-def dt_time(request): #{key : value, key1 : value1, key2 : value2, }
+
+# {"action":"getsubcategory","scid":4}
+def dt_getsubcategory(request):
     jsons = json.loads(request.body)
     action = jsons['action']
-    respData = [{"tsag":str(datetime.now())}] # response-n data-g beldej baina. data key ni list baih buguud list dotor dictionary baina.
-    resp = sendResponse(action, 200, respData)
-    return (resp) # response bustsaaj baina
+    try:
+        scid = jsons['scid']
+    except:
+        action = action
+        respData = []
+        resp = sendResponse(action, 7001, respData)
+        return (resp)
+    
+    myConn = connectDB()
+    cursor = myConn.cursor()
+    query = f"SELECT scid, cid, subname_en, subname_mn, created_at FROM t_subcategory WHERE scid={scid}"
+    cursor.execute(query)
+    columns = cursor.description
+    # print(columns)
+    respRow = [{columns[index][0]:column for index , column in enumerate(value) } for value in cursor.fetchall()]
+    # print(respRow)
+    cursor.close()
+    disconnectDB(myConn)
+    
+    resp = sendResponse(action, 7002, respRow)
+    return resp
+# {"action":"getAllsubcategory","cid":1}
 
-def dt_hello(request):
+def dt_getAllsubcategory(request):
     jsons = json.loads(request.body)
     action = jsons['action']
-    respData = [{"result":"Hello world"}]
-    resp = sendResponse(action, 200, respData)
+    try:
+        cid = jsons['cid']
+    except:
+        action = action
+        respData = []
+        resp = sendResponse(action, 7003, respData)
+        return (resp)
+    
+    myConn = connectDB()
+    cursor = myConn.cursor()
+    if cid==0:
+        query = f"SELECT scid, cid, subname_en, subname_mn, created_at FROM t_subcategory"
+    
+    else:
+        query = f"SELECT scid, cid, subname_en, subname_mn, created_at FROM t_subcategory WHERE cid={cid}"
+    cursor.execute(query)
+    columns = cursor.description
+    # print(columns)
+    respRow = [{columns[index][0]:column for index , column in enumerate(value) } for value in cursor.fetchall()]
+    # print(respRow)
+    cursor.close()
+    disconnectDB(myConn)
+    
+    resp = sendResponse(action, 7004, respRow)
     return resp
 
-def dt_class(request):
-    jsons = json.loads(request.body)
-    action = jsons['action']
-    respData = [{"result":"ECHNEE"}]
-    resp = sendResponse(action, 200, respData)
-    return resp
 
+# CHECK SERVICE
 @csrf_exempt
 def checkService(request):
     if request.method == "POST":
@@ -44,22 +82,13 @@ def checkService(request):
             resp = sendResponse(action, 400, respData)
             return (JsonResponse(resp))
         
-        # print(action)
-        if(action == 'time'):
-            result = dt_time(request)
+
+        if action == 'getsubcategory':
+            result = dt_getsubcategory(request)
             return (JsonResponse(result))
-        elif(action == 'hello'): #hello world
-            result = dt_hello(request)
+
+        elif action == 'getAllsubcategory':
+            result = dt_getAllsubcategory(request)
             return (JsonResponse(result))
-        elif(action == 'class'): #echnee
-            result = dt_class(request)
-            return (JsonResponse(result))
-        else:
-            action = action
-            respData = []
-            resp = sendResponse(action, 406, respData)
-            return (JsonResponse(resp))
-    elif request.method == "GET":
-        return (JsonResponse({}))
-    else :
-        return (JsonResponse({}))
+
+    return JsonResponse(sendResponse("invalid_method", 405, []))
