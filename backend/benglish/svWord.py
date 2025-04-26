@@ -188,6 +188,77 @@ def insert_word(request):
     
     resp=sendResponse(action, 200, respRow)
     return resp 
+
+def update_word(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        action = data.get('action')
+        wid = data.get('wid')
+
+        if not wid:
+            return sendResponse(action, 10001, [])
+
+        fields = ['eng', 'mon', 'eng_sentence', 'translation', 'galig', 'zurag', 'scid']
+        updates = {field: data.get(field) for field in fields if data.get(field) is not None}
+
+        if not updates:
+            return sendResponse(action, 10002, [])  # Nothing to update
+
+        set_clause = ", ".join([f"{key} = %s" for key in updates])
+        values = list(updates.values())
+
+        values.append(wid)
+
+        myConn = connectDB()
+        cursor = myConn.cursor()
+        query = f"UPDATE t_word SET {set_clause} WHERE wid = %s"
+        cursor.execute(query, values)
+        myConn.commit()
+
+        return sendResponse(action, 200, {'updated': cursor.rowcount})
+
+    except Exception as e:
+        return sendResponse(action if 'action' in locals() else 'unknown', 1001, [])
+
+    finally:
+        try:
+            cursor.close()
+            disconnectDB(myConn)
+        except:
+            pass
+        
+def delete_word(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        action = data.get('action')
+        wid = data.get('wid')
+
+        if not wid:
+            return sendResponse(action, 10001, [])
+
+        myConn = connectDB()
+        cursor = myConn.cursor()
+        query = "DELETE FROM t_word WHERE wid = %s"
+        cursor.execute(query, (wid,))
+        myConn.commit()
+
+        return sendResponse(action, 200, {'deleted': cursor.rowcount})
+
+    except Exception as e:
+        return sendResponse(action if 'action' in locals() else 'unknown', 1001, [])
+
+    finally:
+        try:
+            cursor.close()
+            disconnectDB(myConn)
+        except:
+            pass
 #create
 # def create_word(post):
 #     jsons = jsons.loads(post.body)
