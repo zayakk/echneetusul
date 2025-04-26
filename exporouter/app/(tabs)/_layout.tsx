@@ -20,6 +20,14 @@ const BottomRouter = () => {
         }}
       ></Tabs.Screen>
       <Tabs.Screen
+        name="category/index"
+        options={{
+          headerTitle: "Category page",
+          title: "Category",
+          tabBarIcon: () => <AntDesign size={28} name="user" color="aqua" />,
+        }}
+      ></Tabs.Screen>
+      <Tabs.Screen
         name="About"
         options={{
           headerTitle: "About page",

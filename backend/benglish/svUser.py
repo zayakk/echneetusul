@@ -116,6 +116,64 @@ def dt_loginuser(request):
         resp = sendResponse(action, 1007, respData)
     return resp
     
+    
+def dt_gethomepagedata(request):
+    jsons = json.loads(request.body)
+    action = jsons['action']
+    
+    myConn = connectDB()
+    cursor = myConn.cursor()
+    query = f"SELECT cid, catname_en, catname_mn FROM t_category"
+    cursor.execute(query)
+    columns = cursor.description
+    # print(columns)
+    respData = [{columns[index][0]:column for index , column in enumerate(value) } for value in cursor.fetchall()]
+    
+    for item in respData:
+        print(item["cid"])
+        query = f"SELECT scid, cid, subname_en, subname_mn FROM t_subcategory WHERE cid = {item['cid']}"
+        cursor.execute(query)
+        columns = cursor.description
+        respRow = [{columns[index][0]:column for index , column in enumerate(value) } for value in cursor.fetchall()]
+        item['subcat'] = respRow
+        item['bagts'] = len(respRow)
+    resp = sendResponse(action, 200, respData)
+    
+    return resp
+
+def dt_getsubcatdata(request):
+    jsons = json.loads(request.body)
+    action = jsons['action']
+    # try:
+    #     usermail = jsons['usermail']
+    #     pwd = jsons['pwd']
+    # except:
+    #     action = action
+    #     respData = []
+    #     resp = sendResponse(action, 1005, respData)
+    #     return (resp)
+    
+    myConn = connectDB()
+    cursor = myConn.cursor()
+    query = f"SELECT cid, catname_en, catname_mn, catimg, catcolor FROM t_category"
+    cursor.execute(query)
+    columns = cursor.description
+    # print(columns)
+    respData = [{columns[index][0]:column for index , column in enumerate(value) } for value in cursor.fetchall()]
+    
+    for subcat in respData:
+        # print(subcat['cid'])
+        query = f"SELECT * FROM t_subcategory WHERE cid = {subcat['cid']}"
+        cursor.execute(query)
+        columns = cursor.description
+        # print(columns)
+        respRow = [{columns[index][0]:column for index , column in enumerate(value) } for value in cursor.fetchall()]
+        subcat["subcat"] = respRow
+        subcat["bagts"] = len(respRow)
+        
+    resp = sendResponse(action, 200, respData)
+    return resp
+
 @csrf_exempt
 def checkService(request):
     if request.method == "POST":
@@ -144,6 +202,12 @@ def checkService(request):
             return (JsonResponse(result))
         elif(action == 'loginuser'):
             result = dt_loginuser(request)
+            return (JsonResponse(result))
+        elif(action == 'gethomepagedata'):
+            result = dt_gethomepagedata(request)
+            return (JsonResponse(result))
+        elif(action == 'getsubcatdata'):
+            result = dt_getsubcatdata(request)
             return (JsonResponse(result))
        
         else:

@@ -168,7 +168,6 @@ const index = () => {
                   color: selectedCountry == country.name ? "white" : "black",
                 }}
               >
-                {" "}
                 {country.name}
               </Text>
             </View>
